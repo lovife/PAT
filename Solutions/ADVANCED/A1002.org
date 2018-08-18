@@ -1,0 +1,122 @@
+* 1002 A+B for Polynomials (25)（25 分）
+This time, you are supposed to find A+B where A and B are two polynomials.
+
+** Input
+
+Each input file contains one test case. Each case occupies 2 lines, and each line contains the information of a polynomial: K N1 a~N1~ N2 a~N2~ ... NK a~NK~, where K is the number of nonzero terms in the polynomial, Ni and a~Ni~ (i=1, 2, ..., K) are the exponents and coefficients, respectively. It is given that 1 <= K <= 10，0 <= NK < ... < N2 < N1 <=1000.
+
+** Output
+
+For each test case you should output the sum of A and B in one line, with the same format as the input. Notice that there must be NO extra space at the end of each line. Please be accurate to 1 decimal place.
+
+** Sample Input:
+#+BEGIN_SRC text
+2 1 2.4 0 3.2
+2 2 1.5 1 0.5
+#+END_SRC
+** Sample Output:
+#+BEGIN_SRC text
+3 2 1.5 1 2.9 0 3.2
+#+END_SRC
+** Analyzation
+
+简单模拟，实现多项式相加
+
+K 是项数 N1 是项的指数 a~N1 是前面的系数，输出 需要降幂排序
+
+最初思路：每个多项式 1 个 int 数组存放指数 1 个 double 数组存放系数
+注意点：系数相加时，消去系数为 0 的项
+
+注意到指数最大为 1000 也可以用下标表示指数，极大地简化代码
+double[1001] 开销是 1001*8Byte = 8KB 远远小于 64M 的限制
+
+优化思路：double c[1001] = {0} 存放多项式系数 a_0 ~ a_i ~ a_1001 i是数组下标，数组内存放系数，扫描数据进行对应指数相加，完毕，统计非 0 项,（可以用 K 个的数组存放访问指针加快输出）, 输出。
+
+** Solutions
+#+BEGIN_SRC c++
+#include <stdio.h>
+#include <math.h>
+const int MaxN = 1001;
+const int MaxK = 10;
+int main() {
+  double c[MaxN] = {0};
+  int n;
+  scanf("%d", &n);
+  for(int i=1; i<=n; i++){
+    int p;
+    double tmp;
+    scanf("%d%lf", &p, &tmp);
+    c[p] += tmp;
+  }
+  scanf("%d", &n);
+  for(int i=1; i<=n; i++){
+    int p;
+    double tmp;
+    scanf("%d%lf", &p, &tmp);
+    c[p] += tmp;
+  }
+  int show[2*MaxK+1] = {0};  //show[0] 存放个数
+  for(int i=1000; i>=0; i--) //降幂排列
+    if(fabs(c[i])>1e-8){     //fabs(double)>1e-8 绝对值大于1e-8即视为非零
+      show[0]++;
+      show[show[0]] = i;
+    }
+  printf("%d", show[0]);
+  for(int *p = show+1; p<=show+show[0]; p++) //show[0] = 0 无法输出符合题意
+    printf(" %d %.1f", *p, c[*p]);
+  return 0;
+#+END_SRC
+
+#+BEGIN_SRC c++
+// 较复杂的实现
+#include <stdio.h>
+const int MaxK = 11;
+int main() {
+  int na[MaxK] = {0}, nb[MaxK] = {0}, nc[MaxK] = {0};
+  double a[MaxK] = {0}, b[MaxK] = {0}, c[MaxK] = {0};
+  scanf("%d", &na[0]);
+  for(int i=1; i<=na[0]; i++)
+    scanf("%d%lf", &na[i], &a[i]);
+  scanf("%d", &nb[0]);
+  for(int i=1; i<=nb[0]; i++)
+    scanf("%d%lf", &nb[i], &b[i]);
+  nc[0] = na[0] + nb[0];
+  int pa = 1, pb = 1, pc = 1;
+  while(pa<=na[0]&&pb<=nb[0]){
+    if(na[pa]==nb[pb]){
+      nc[0]--;
+      nc[pc] = na[pa];
+      c[pc] = a[pa++] + b[pb++];
+      if(c[pc]<1e-8){
+        nc[0]--;
+        continue;
+      }
+      pc++;
+    }
+    else if(na[pa] > nb[pb]){
+      nc[pc] = na[pa];
+      c[pc++] = a[pa++];
+    }
+    else{
+      nc[pc] = nb[pb];
+      c[pc++] = b[pb++];
+    }
+  }
+  if(pa!=na[0]+1){
+    while(pa<=na[0]){
+      nc[pc] = na[pa];
+      c[pc++] = a[pa++];
+    }
+  }
+  if(pb!=nb[0]+1){
+    while(pb<=nb[0]){
+      nc[pc] = nb[pb];
+      c[pc++] = b[pb++];
+    }
+  }
+  printf("%d", nc[0]);
+  for(int i=1; i<=nc[0]; i++)
+    printf(" %d %.1f", nc[i], c[i]);
+  return 0;
+}
+#+END_SRC
