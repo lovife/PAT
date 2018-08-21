@@ -6,3 +6,5 @@ A place to put my notes abot this Testing.
 [[https://github.com/liuchuo/PAT][🍭 浙江大学PAT题解(C/C++/Java) - 努力成为萌萌的程序媛～]]
 
 [[https://www.jianshu.com/p/8876704ea9c8][LeetCode 算法题刷题心得（JavaScript）]]
+
+[[https://github.com/XuToTo/PAT][PAT(Programming Ability Test) Solutions XuToTo]]
