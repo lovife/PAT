@@ -1,5 +1,5 @@
 * PAT
-A place to put my notes abot this Testing
+A place to put my notes abot this Testing.
 
 ** 参考
 
