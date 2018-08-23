@@ -1,0 +1,43 @@
+* 算法初步 排序算法-选择排序
+
+** Quick view
+#+BEGIN_QUOTE
+Wikipedia: [[https://zh.wikipedia.org/wiki/%E9%80%89%E6%8B%A9%E6%8E%92%E5%BA%8F][选择排序]]（Selection sort）是一种简单直观的排序算法。首先在未排序序列中找到最小（大）元素，存放到排序序列的起始位置，然后，再从剩余未排序元素中继续寻找最小（大）元素，然后放到已排序序列的末尾。
+
+原地操作几乎是选择排序的唯一优点，当空间复杂度要求较高时，可以考虑选择排序；实际适用的场合非常罕见。
+#+END_QUOTE
+选择排序在最好，最坏和平均的时间复杂度都是 O(n^2), 空间复杂度是 O(1)。
+
+** More infor
+选择排序是最简单的排序算法之一。
+
+#+BEGIN_SRC text
+/-----已有序-----\   V
+|A[1]| ... |A[i-1]|A[i]|A[i+1]| ... |A[n]|
+                   \---------待排序------/
+                 从 [i,n] 中选出最小值，与 A[i]交换
+
+/-----已有序----------\    V
+|A[1]| ... |A[i-1]|A[i]|A[i+1]| ... |A[n]|
+                        \----待排序------/
+#+END_SRC
+
+算法逻辑：总共需要进行 n 趟操作 (1<=i<=n)，每趟操作选出待排序部分 [i,n] 中最小的元素，令其与 A[i] 交换。
+
+#+BEGIN_SRC c++
+  // c use in c++
+  void swap(int *a, int *b){
+      int tmp = *a;
+      *a = *b;
+      *b = tmp;
+  }
+  void selection_sort(int arr[], int len){
+      //计数也为数组下标，从 0 开始最好
+      for(int i=0; i<len-1; i++){ //进行 n 趟操作，最后一个数_len-1 没得选择
+          int min = i;
+          for(int j=i+1; j<len; j++ ) //走訪待排序的元素
+              if(arr[j]<arr[min]) min = j; //记录最小值的位置
+          swap(&arr[min], &arr[i]);  //不管 min==i 与否，都进行交换（并不会额外消耗很多时间）
+      }
+  }
+#+END_SRC
