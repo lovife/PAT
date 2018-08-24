@@ -1,0 +1,136 @@
+* 1025 PAT Ranking (25)（25 分）
+Programming Ability Test (PAT) is organized by the College of Computer Science and Technology of Zhejiang University. Each test is supposed to run simultaneously in several places, and the ranklists will be merged immediately after the test. Now it is your job to write a program to correctly merge all the ranklists and generate the final rank.
+
+** Input Specification:
+
+Each input file contains one test case. For each case, the first line contains a positive number N (<=100), the number of test locations. Then N ranklists follow, each starts with a line containing a positive integer K (<=300), the number of testees, and then K lines containing the registration number (a 13-digit number) and the total score of each testee. All the numbers in a line are separated by a space.
+
+** Output Specification:
+
+For each test case, first print in one line the total number of testees. Then print the final ranklist in the following format:
+
+registration_number final_rank location_number local_rank
+
+The locations are numbered from 1 to N. The output must be sorted in nondecreasing order of the final ranks. The testees with the same score must have the same rank, and the output must be sorted in nondecreasing order of their registration numbers.
+
+** Sample Input:
+#+BEGIN_SRC text
+2
+5
+1234567890001 95
+1234567890005 100
+1234567890003 95
+1234567890002 77
+1234567890004 85
+4
+1234567890013 65
+1234567890011 25
+1234567890014 100
+1234567890012 85
+#+END_SRC
+** Sample Output:
+#+BEGIN_SRC text
+9
+1234567890005 1 1 1
+1234567890014 1 2 1
+1234567890001 3 1 2
+1234567890003 3 1 2
+1234567890004 5 1 4
+1234567890012 5 2 2
+1234567890002 7 1 5
+1234567890013 8 2 3
+1234567890011 9 2 4
+#+END_SRC
+** Analyzation
+
+大意是对不同 PAT 考场的考生根据总分给出一个全局的排名和局部（本考场）的排名
+
+思路：
+
+1) 构造一个学生结构体
+   #+BEGIN_SRC c++
+const int MaxK = 100*300+1;
+struct testee{
+  char stnum[15];
+  int score;
+  int place;
+  int finr; //最终排名
+  int locr; //考场排名
+  testee(){
+    stnum[0] = NULL;
+    socre = place = finr = locr = 0;
+  }
+}joinpat[MaxK];
+#+END_SRC
+2) 读入全部学生之后直接从大到小排序
+3) 遍历，对已有序学生序列进行排名，用一个二维数组 rank[MaxN+1][3] 存放排名和上一名的分数，根据考场和学生信息更新该数组。
+  - i 为考场
+  - rank[i][0] 存放上一名学生信息
+  - rank[i][1] 存放排过的学生人数
+  - rank[i][2] 存放排名
+4) 注意到分数相同，排名并列，但按考号顺序排列
+
+** Solutions
+#+BEGIN_SRC c++
+#include <stdio.h>
+#include <string.h>
+#include <algorithm>
+using namespace std;
+const int MaxK = 100*300;
+const int MaxN = 100;
+struct testee{
+  char stnum[15];
+  int score;
+  int place;
+  int finr;
+  int locr;
+}joinpat[MaxK+1];
+bool cmp(testee a, testee b){
+  if(a.score==b.score)
+    return strcmp(a.stnum, b.stnum)<0; //二级按考号从小到大
+  return a.score > b.score;  //按成绩从大到小排列
+}
+int main(){
+  int n, p = 0, rank[MaxN+1][3] = {}; //p 为结构体数组当前访问位置
+  scanf("%d", &n);
+  for(int i=1; i<=n; i++){  //考场从 1~n 编号
+    int k;
+    scanf("%d", &k);
+    for(int j=1; j<=k; j++){
+      // 存储 考生信息（考号 成绩 考场）
+      scanf("%s %d", joinpat[p].stnum, &joinpat[p].score);
+      joinpat[p].place = i;
+      p++;
+    }
+  }
+  sort(joinpat, joinpat+p, cmp); //排序
+  for(testee *sp = joinpat; sp<joinpat+p; sp++){  //排名
+    //最终排名
+    rank[0][1]++; //来一个排序，rank[0][1] 为他全局顺序
+    if(sp->score==rank[0][0]){//和上一名成绩相同
+      sp->finr = rank[0][2];  //并列
+    }
+    else{
+      rank[0][0] = sp->score;  //更新成绩
+      rank[0][2] = rank[0][1]; //更新排名
+      sp->finr = rank[0][2];
+    }
+    //考场排名
+    int j = sp->place;
+    rank[j][1]++; //来一个排序，rank[j][1] 为他局部顺序
+    if(sp->score==rank[j][0]){//和考场上一名成绩相同
+      sp->locr = rank[j][2];
+    }
+    else{
+      rank[j][0] = sp->score;
+      rank[j][2] = rank[j][1];
+      sp->locr = rank[j][2];
+    }
+  }
+  //output
+  printf("%d\n", p);
+  for(testee *sp = joinpat; sp<joinpat+p; sp++)
+    printf("%s %d %d %d\n", sp->stnum, sp->finr, sp->place, sp->locr);
+  return 0;
+}
+#+END_SRC
