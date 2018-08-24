@@ -116,7 +116,7 @@ The locations are numbered from 1 to N. The output must be sorted in nondecreasi
       else sp->finr = rank[i][2];  //i==0 最终排名
   }
   int main(){
-      int n, rank[MaxN+1][3] = {{-1,0,0}}, p = 0; //p 存数据数组最后一个元素后一个地址
+      int n, rank[MaxN+1][3] = {{-1,0,0}}, end = 0; //end 存数据数组最后一个元素后一个数组下标
       scanf("%d", &n);
       for(int i=1; i<=n; i++){  //考场从 1~n 编号
           rank[i][0] = -1; //让排名数组初始化一个不可能出现的成绩
@@ -124,19 +124,19 @@ The locations are numbered from 1 to N. The output must be sorted in nondecreasi
           scanf("%d", &k);
           for(int j=1; j<=k; j++){
               //存储 考生信息（考号 成绩 考场）
-              scanf("%s %d", joinpat[p].id, &joinpat[p].score);
-              joinpat[p].place = i;
-              p++;
+              scanf("%s %d", joinpat[end].id, &joinpat[end].score);
+              joinpat[end].place = i;
+              end++;
           }
       }
-      sort(joinpat, joinpat+p, cmp); //排序
-      for(testee *sp = joinpat; sp<joinpat+p; sp++){ //排名
+      sort(joinpat, joinpat+end, cmp); //排序
+      for(testee *sp = joinpat; sp<joinpat+end; sp++){ //排名
           ranking(sp, rank, 0);
           ranking(sp, rank, sp->place);
       }
       //output
-      printf("%d\n", p);
-      for(testee *sp = joinpat; sp<joinpat+p; sp++)
+      printf("%d\n", end); //end 即为人数
+      for(testee *sp = joinpat; sp<joinpat+end; sp++)
           printf("%s %d %d %d\n", sp->id, sp->finr, sp->place, sp->locr);
       return 0;
   }
