@@ -15,31 +15,31 @@ The locations are numbered from 1 to N. The output must be sorted in nondecreasi
 
 ** Sample Input:
 #+BEGIN_SRC text
-2
-5
-1234567890001 95
-1234567890005 100
-1234567890003 95
-1234567890002 77
-1234567890004 85
-4
-1234567890013 65
-1234567890011 25
-1234567890014 100
-1234567890012 85
+  2
+  5
+  1234567890001 95
+  1234567890005 100
+  1234567890003 95
+  1234567890002 77
+  1234567890004 85
+  4
+  1234567890013 65
+  1234567890011 25
+  1234567890014 100
+  1234567890012 85
 #+END_SRC
 ** Sample Output:
 #+BEGIN_SRC text
-9
-1234567890005 1 1 1
-1234567890014 1 2 1
-1234567890001 3 1 2
-1234567890003 3 1 2
-1234567890004 5 1 4
-1234567890012 5 2 2
-1234567890002 7 1 5
-1234567890013 8 2 3
-1234567890011 9 2 4
+  9
+  1234567890005 1 1 1
+  1234567890014 1 2 1
+  1234567890001 3 1 2
+  1234567890003 3 1 2
+  1234567890004 5 1 4
+  1234567890012 5 2 2
+  1234567890002 7 1 5
+  1234567890013 8 2 3
+  1234567890011 9 2 4
 #+END_SRC
 ** Analyzation
 
@@ -49,18 +49,18 @@ The locations are numbered from 1 to N. The output must be sorted in nondecreasi
 
 1) 构造一个学生结构体
    #+BEGIN_SRC c++
-const int MaxK = 100*300+1;
-struct testee{
-  char id[15];
-  int score;
-  int place;
-  int finr; //最终排名
-  int locr; //考场排名
-  testee(){
-    stnum[0] = NULL;
-    socre = place = finr = locr = 0;
-  }
-}joinpat[MaxK];
+     const int MaxK = 100*300+1;
+     struct testee{
+       char id[15];
+       int score;
+       int place;
+       int finr; //最终排名
+       int locr; //考场排名
+       testee(){
+         stnum[0] = NULL;
+         socre = place = finr = locr = 0;
+       }
+     }joinpat[MaxK];
 #+END_SRC
 2) 读入全部学生之后直接从大到小排序（注意到分数相同，但按考号顺序排列）
 3) 遍历，对已有序学生序列进行排名，用一个二维数组 rank[MaxN+1][3] 存放排名和上一名的分数，根据考场和学生信息更新该数组。
@@ -71,15 +71,15 @@ struct testee{
   只要当前学生成绩等于上一名，排名不变。否则，当前排过的学生数就是他的真实排名。
   根据这个逻辑更新排名数组即可。
   #+BEGIN_SRC c++
-void ranking(testee *sp, int rank[][3], int i){
-    rank[i][1]++;              //待排名者序号
-    if(sp->score!=rank[i][0]){ //和上一名成绩不同
-      rank[i][0] = sp->score;  //更新成绩
-      rank[i][2] = rank[i][1]; //更新排名
+    void ranking(testee *sp, int rank[][3], int i){
+        rank[i][1]++;              //待排名者序号
+        if(sp->score!=rank[i][0]){ //和上一名成绩不同
+          rank[i][0] = sp->score;  //更新成绩
+          rank[i][2] = rank[i][1]; //更新排名
+        }
+        if(i) sp->locr = rank[i][2]; //i!=0 考场排名
+        else sp->finr = rank[i][2];  //i==0 最终排名
     }
-    if(i) sp->locr = rank[i][2]; //i!=0 考场排名
-    else sp->finr = rank[i][2];  //i==0 最终排名
-}
   #+END_SRC
 *没想到实现的时候，最初分数从零开始，天真的认为考零分不会是第一（当一个考场只有一个人，然后他考零分）*
 
@@ -88,56 +88,56 @@ void ranking(testee *sp, int rank[][3], int i){
 2. 判断第一名，用他的分数做为排名数组的开始分数
 ** Solutions
 #+BEGIN_SRC c++
-#include <cstdio>
-#include <cstring>
-#include <algorithm>
-using namespace std;
-const int MaxK = 100*300;
-const int MaxN = 100;
-struct testee{
-  char id[15];
-  int score;
-  int place;
-  int finr;
-  int locr;
-}joinpat[MaxK+1];
-bool cmp(testee a, testee b){
-  //按成绩从大到小排列，二级按考号从小到大
-  if(a.score!=b.score) return a.score > b.score;
-  else return strcmp(a.id, b.id)<0;
-}
-void ranking(testee *sp, int rank[][3], int i){
-    rank[i][1]++;              //待排名者序号
-    if(sp->score!=rank[i][0]){ //和上一名成绩不同
-      rank[i][0] = sp->score;  //更新成绩
-      rank[i][2] = rank[i][1]; //更新排名
-    }
-    if(i) sp->locr = rank[i][2]; //i!=0 考场排名
-    else sp->finr = rank[i][2];  //i==0 最终排名
-}
-int main(){
-  int n, rank[MaxN+1][3] = {{-1,0,0}}, p = 0; //p 存数据数组最后一个元素后一个地址
-  scanf("%d", &n);
-  for(int i=1; i<=n; i++){  //考场从 1~n 编号
-    rank[i][0] = -1; //让排名数组初始化一个不可能出现的成绩
-    int k;
-    scanf("%d", &k);
-    for(int j=1; j<=k; j++){
-      //存储 考生信息（考号 成绩 考场）
-      scanf("%s %d", joinpat[p].id, &joinpat[p].score);
-      joinpat[p].place = i;
-      p++;
-    }
+  #include <cstdio>
+  #include <cstring>
+  #include <algorithm>
+  using namespace std;
+  const int MaxK = 100*300;
+  const int MaxN = 100;
+  struct testee{
+    char id[15];
+    int score;
+    int place;
+    int finr;
+    int locr;
+  }joinpat[MaxK+1];
+  bool cmp(testee a, testee b){
+    //按成绩从大到小排列，二级按考号从小到大
+    if(a.score!=b.score) return a.score > b.score;
+    else return strcmp(a.id, b.id)<0;
   }
-  sort(joinpat, joinpat+p, cmp); //排序
-  for(testee *sp = joinpat; sp<joinpat+p; sp++){ //排名
-    ranking(sp, rank, 0);
-    ranking(sp, rank, sp->place);
+  void ranking(testee *sp, int rank[][3], int i){
+      rank[i][1]++;              //待排名者序号
+      if(sp->score!=rank[i][0]){ //和上一名成绩不同
+        rank[i][0] = sp->score;  //更新成绩
+        rank[i][2] = rank[i][1]; //更新排名
+      }
+      if(i) sp->locr = rank[i][2]; //i!=0 考场排名
+      else sp->finr = rank[i][2];  //i==0 最终排名
   }
-  //output
-  printf("%d\n", p);
-  for(testee *sp = joinpat; sp<joinpat+p; sp++)
-    printf("%s %d %d %d\n", sp->id, sp->finr, sp->place, sp->locr);
-  return 0;
-}
+  int main(){
+    int n, rank[MaxN+1][3] = {{-1,0,0}}, p = 0; //p 存数据数组最后一个元素后一个地址
+    scanf("%d", &n);
+    for(int i=1; i<=n; i++){  //考场从 1~n 编号
+      rank[i][0] = -1; //让排名数组初始化一个不可能出现的成绩
+      int k;
+      scanf("%d", &k);
+      for(int j=1; j<=k; j++){
+        //存储 考生信息（考号 成绩 考场）
+        scanf("%s %d", joinpat[p].id, &joinpat[p].score);
+        joinpat[p].place = i;
+        p++;
+      }
+  2  }
+    sort(joinpat, joinpat+p, cmp); //排序
+    for(testee *sp = joinpat; sp<joinpat+p; sp++){ //排名
+      ranking(sp, rank, 0);
+      ranking(sp, rank, sp->place);
+    }
+    //output
+    printf("%d\n", p);
+    for(testee *sp = joinpat; sp<joinpat+p; sp++)
+      printf("%s %d %d %d\n", sp->id, sp->finr, sp->place, sp->locr);
+    return 0;
+  }
 #+END_SRC
