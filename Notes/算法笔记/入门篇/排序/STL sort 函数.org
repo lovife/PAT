@@ -1,0 +1,167 @@
+* C++ 中的 sort 函数
+例题 [[file:../../../../Solutions/ADVANCED/A1025.org][A1025 PAT Ranking (25)]]
+** Contents                                                           :TOC:
+- [[#c-中的-sort-函数][C++ 中的 sort 函数]]
+  - [[#quick-view][Quick view]]
+  - [[#sort-实用用法][Sort 实用用法]]
+    - [[#如何使用-sort-排序基础使用][如何使用 sort 排序？（基础使用）]]
+      - [[#incloude-algorithm][#incloude <algorithm>]]
+      - [[#using-namespace-std][using namespace std;]]
+      - [[#-默认使用从小到大排序][// 默认使用从小到大排序]]
+    - [[#如何实现-cmpare-比较函数][如何实现 cmpare 比较函数？]]
+      - [[#基本数据类型数组][基本数据类型数组]]
+        - [[#不填比较函数默认使用从小到大排序][不填比较函数，默认使用从小到大排序]]
+        - [[#使用比较函数变更为从大到小排序][使用比较函数，变更为从大到小排序]]
+      - [[#结构体数组的排序][结构体数组的排序]]
+        - [[#按-x-从到小排序-一级排序][按 x 从到小排序 （一级排序）]]
+        - [[#按-x-从到小排序但-x-相等时按照-y-从小到大排序-二级排序][按 x 从到小排序，但 x 相等时，按照 y 从小到大排序 （二级排序）]]
+      - [[#容器的排序以后再学][容器的排序（以后再学）]]
+    - [[#c一道深坑面试题stl里sort算法用的是什么排序算法---币夏的文章---知乎][C++一道深坑面试题：STL里sort算法用的是什么排序算法？ - 币夏的文章 - 知乎]]
+
+** Quick view
+#+BEGIN_QUOTE
+Wikipedia: [[https://en.wikipedia.org/wiki/Sort_(C%2B%2B)][sort]] is a generic function in the C++ Standard Library for doing comparison sorting. The function originated in the Standard Template Library (STL).
+#+END_QUOTE
+
+** Sort 实用用法
+- 《算法笔记》表示在做题中不推荐使用 C qsort，而用 C++ sort
+
+*** 如何使用 sort 排序？（基础使用）
+**** #incloude <algorithm>
+**** using namespace std;
+**** // 默认使用从小到大排序
+#+BEGIN_SRC c++
+sort(a, a+n); //a 首元素的地址（必填），a+n 尾元素的下一个地址（必填）
+#+END_SRC
+- 对 int 数组排序
+  #+BEGIN_SRC c++
+    #include <cstdio>
+    #include <algorithm>
+    using namespace std;
+    int main() {
+        int a[6] = {9, 4, 2, 5, 6, -1};
+        //对 a[0]~a[3] 从小到大排序
+        sort(a, a+4); // a[3] 的下一个元素是 a[4]
+        //对 a[4]~a[5] 从小到大排序
+        sort(a+4, a+6); // 理同 for(int *p=a+4; p<a+4+2; p++)
+        for(int i=0; i<6; i++){
+            printf("%d ", a[i]);
+        }
+        printf("\n");
+        //对 a[0]~a[5] 从小到大排序
+        sort(a, a+6); // a+6 理同用指针访问数组，限制指针，防止访问出界
+        for(int i=0; i<6; i++){
+            printf("%d ", a[i]);
+        }
+        /*
+        for(int *p=a; p<a+6; p++){
+            printf("%d ", *p);
+        }
+        ,*/
+        return 0;
+    }
+    /*-----console-----
+      2 4 5 9 -1 6
+      -1 2 4 5 6 9
+     ,*///------------
+
+  #+END_SRC
+- 对 double 数组排序
+  #+BEGIN_SRC c++
+    #include <cstdio>
+    #include <algorithm>
+    using namespace std;
+    int main() {
+        double a[] = {1.4, -2.1, 9};
+        sort(a, a+3);
+        for(double *p=a; p<a+3; p++)
+            printf("%.1f ", *p);
+        return 0;
+    }
+    /*-----console-----
+      2.1 1.4 9.0
+     ,*///------------
+
+  #+END_SRC
+- 对 char 数组排序 （默认为字典序，从小到大排序）
+  #+BEGIN_SRC c++
+    #include <cstdio>
+    #include <cstring>
+    #include <algorithm>
+    using namespace std;
+    int main() {
+      char c[] = {'G', 'O', 'P', 'A', 'T', '\0'};
+      sort(c, c+strlen(c));
+      printf("%s", c);
+      return 0;
+      }
+    /*-----console-----
+      AGOPT
+     ,*///------------
+
+  #+END_SRC
+
+以上三个示例都是使用默认排列规则对具有可比性的基本数据类型排序，实际使用中会遇到两个问题。
+
+1. 定制排列规则 （如，从小到大排序，相等情况处理 ...）
+2. 数据本身没有可比性，必须告诉 sort 可比规则 （如，结构体）
+
+这些问题的解决都依赖下一个功能
+*** 如何实现 cmpare 比较函数？
+
+**** 基本数据类型数组
+
+***** 不填比较函数，默认使用从小到大排序
+
+同  [[#如何使用-sort-排序基础使用][如何使用 sort 排序？（基础使用）]]
+
+***** 使用比较函数，变更为从大到小排序
+
+以 int 型为例
+#+BEGIN_SRC c++
+  #include <cstdio>
+  #include <algorithm>
+  using namespace std;
+  bool cmp(int a, int b) {
+      return a > b;
+  }
+  int main() {
+      // a 开辟的空间大小由初始化的个数决定
+      //占用空间为 sizeof(a) 这里为 5*4 = 20 Byte
+      //元素个数为 sizeof(a)/4 这里为 5*4/4 = 5
+      int a[] = {3, 1, 4, 2, 5};
+      sort(a, a+sizeof(a)/4, cmp);
+      for(int i=0; i<sizeof(a)/4; i++)
+          printf("%d ", a[i]);
+      return 0;
+  }
+  /*-----console-----
+    5 4 3 2 1
+   ,*///------------
+#+END_SRC
+
+- 这里讲得很清楚 [[http://www.cppblog.com/mzty/archive/2005/12/15/1770.html][详细解说 STL 排序(Sort)]]
+**** 结构体数组的排序
+现定义里如下结构体
+#+BEGIN_SRC c++
+  struct node {
+      int x, y;
+  }ssd[10];
+#+END_SRC
+***** 按 x 从到小排序 （一级排序）
+compare 函数
+#+BEGIN_SRC c++
+  bool cmp(node a, node b){
+      return a.x > b.x;
+  }
+#+END_SRC
+***** 按 x 从到小排序，但 x 相等时，按照 y 从小到大排序 （二级排序）
+#+BEGIN_SRC c++
+  bool cmp(node a, node b){
+      if(a.x!=b.x) return a.x > b.x;
+      else return a.y < b.y;
+  }
+#+END_SRC
+**** 容器的排序（以后再学）
+*** C++一道深坑面试题：STL里sort算法用的是什么排序算法？ - 币夏的文章 - 知乎
+https://zhuanlan.zhihu.com/p/36274119
