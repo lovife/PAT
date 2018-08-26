@@ -39,3 +39,5 @@ Wikipedia: [[https://en.wikipedia.org/wiki/Recursion][Recursion]] occurs when a 
 学习计算机有一个原则，"learning by doing"，来看看以下这些经典例题，如何运用分治思想和使用递归函数的。
 
 - [[file:%E4%BD%BF%E7%94%A8%E9%80%92%E5%BD%92%E6%B1%82%E8%A7%A3%20n%20%E7%9A%84%E9%98%B6%E4%B9%98.org::*%E9%80%92%E5%BD%92%E6%B1%82%E8%A7%A3%20n%20%E7%9A%84%E9%98%B6%E4%B9%98][递归求解 n 的阶乘]]
+- [[file:%E6%B1%82%20Fibonacci%20%E6%95%B0%E5%88%97%E7%9A%84%E7%AC%AC%20n%20%E9%A1%B9.org::*Fibonacci%20%E6%95%B0%E5%88%97][Fibonacci 数列]]
+- [[file:%E5%85%A8%E6%8E%92%E5%88%97%E9%97%AE%E9%A2%98.org::*Full%20Permutation%20%E5%85%A8%E6%8E%92%E5%88%97][Full Permutation 全排列]]
