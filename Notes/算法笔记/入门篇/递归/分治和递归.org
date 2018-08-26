@@ -1,0 +1,41 @@
+* 分治
+
+** Quick view
+#+BEGIN_QUOTE
+Wikipedia: In computer science, [[https://en.wikipedia.org/wiki/Divide_and_conquer_algorithm][divide and conquer]] is an algorithm design paradigm based on multi-branched recursion. A divide and conquer algorithm works by recursively breaking down a problem into two or more sub-problems of the same or related type, until these become simple enough to be solved directly.
+#+END_QUOTE
+
+** More infor
+
+“分而治之”， *分治将原问题划分为若干个规模较小而结构与原问题相同或相似度子问题。* *然后分别解决这些子问题，最后合并子问题的解，即得到原问题的解。*
+
+体现为三个步骤
+
+1. 分解
+2. 解决
+3. 合并
+
+*即可以使用递归的手段去实现，也可以使用非递归的手段去实现。*
+
+* 递归
+
+** Quick view
+#+BEGIN_QUOTE
+Wikipedia: [[https://en.wikipedia.org/wiki/Recursion][Recursion]] occurs when a thing is defined in terms of itself or of its type. The most common application of recursion is in mathematics and computer science, *where a function being defined is applied within its own definition.*
+#+END_QUOTE
+
+** More infor
+
+语言中的递归
+#+BEGIN_QUOTE
+一只狗来到厨房，偷走一小块面包。厨子举起杓子，把那只狗打死了。于是所有的狗都跑来了，给那只狗掘了一个坟墓，还在墓碑上刻了墓志铭，让未来的狗可以看到：“一只狗来到厨房，偷走一小块面包。厨子举起杓子，把那只狗打死了。于是所有的狗都跑来了，给那只狗掘了一个坟墓，还在墓碑上刻了墓志铭，让未来的狗可以看到：‘一只狗来到厨房，偷走一小块面包。厨子举起杓子，把那只狗打死了。于是所有的狗都跑来了，给那只狗掘了一个坟墓，还在墓碑上刻了墓志铭，让未来的狗可以看到……’”
+#+END_QUOTE
+
+但在递归函数使用上，有比较规范的使用格式，如下的两个重要概念。（避免出现无限递归）
+
+1. 递归边界
+2. 递归式/递归调用
+
+学习计算机有一个原则，"learning by doing"，来看看以下这些经典例题，如何运用分治思想和使用递归函数的。
+
+- [[file:%E4%BD%BF%E7%94%A8%E9%80%92%E5%BD%92%E6%B1%82%E8%A7%A3%20n%20%E7%9A%84%E9%98%B6%E4%B9%98.org::*%E9%80%92%E5%BD%92%E6%B1%82%E8%A7%A3%20n%20%E7%9A%84%E9%98%B6%E4%B9%98][递归求解 n 的阶乘]]
