@@ -1,6 +1,6 @@
 * 简单贪心
-- 例题 [[file:~/code/PATpractice/Solutions/BASIC/B1020.org::*1020%20%E6%9C%88%E9%A5%BC%EF%BC%8825%20%E5%88%86%EF%BC%89][B1020 月饼（25 分）]]
-- 例题 [[file:~/code/PATpractice/Solutions/BASIC/B1023.org::*1023%20%E7%BB%84%E4%B8%AA%E6%9C%80%E5%B0%8F%E6%95%B0%EF%BC%8820%20%E5%88%86%EF%BC%89][B1023 组个最小数（20 分）]]
+- 例题 [[file:../../../../Solutions/BASIC/B1020.org::*1020%20%E6%9C%88%E9%A5%BC%EF%BC%8825%20%E5%88%86%EF%BC%89][B1020 月饼（25 分)]]
+- 例题 [[file:../../../../Solutions/BASIC/B1023.org::*1023%20%E7%BB%84%E4%B8%AA%E6%9C%80%E5%B0%8F%E6%95%B0%EF%BC%8820%20%E5%88%86%EF%BC%89][B1023 组个最小数（20 分）]]
 ** Quick view
 #+BEGIN_QUOTE
 Wikipedia: A [[https://en.wikipedia.org/wiki/Greedy_algorithm][greedy algorithm]] is an algorithmic paradigm that follows the problem solving heuristic of making the locally optimal choice at each stage[1] with the intent of finding a global optimum.
