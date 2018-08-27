@@ -1,0 +1,28 @@
+* 简单贪心
+- 例题 [[file:~/code/PATpractice/Solutions/BASIC/B1020.org::*1020%20%E6%9C%88%E9%A5%BC%EF%BC%8825%20%E5%88%86%EF%BC%89][B1020 月饼（25 分）]]
+- 例题 [[file:~/code/PATpractice/Solutions/BASIC/B1023.org::*1023%20%E7%BB%84%E4%B8%AA%E6%9C%80%E5%B0%8F%E6%95%B0%EF%BC%8820%20%E5%88%86%EF%BC%89][B1023 组个最小数（20 分）]]
+** Quick view
+#+BEGIN_QUOTE
+Wikipedia: A [[https://en.wikipedia.org/wiki/Greedy_algorithm][greedy algorithm]] is an algorithmic paradigm that follows the problem solving heuristic of making the locally optimal choice at each stage[1] with the intent of finding a global optimum.
+#+END_QUOTE
+
+** More infor
+
+贪心法是求解一类最优化问题的方法，在每一步选择中都采取在当前状态下最好或最优（即最有利）的选择，从而希望导致结果是最好或最优的算法。
+
+对于大部分的问题，贪心法通常都不能找出最佳解（不过也有例外），因为他们一般没有测试所有可能的解。贪心法容易过早做决定，因而没法达到最佳解。
+
+证明贪心法能找到全局最优解，一般用反证法或数学归纳法。
+
+*** 实现细节
+
+- 建立数学模型来描述问题。
+- 把求解的问题分成若干个子问题。
+- 对每一子问题求解，得到子问题的局部最优解。
+- 把子问题的解局部最优解合成原来解问题的一个解。
+
+实现该算法的过程：
+
+- 从问题的某一初始解出发；
+- while 能朝给定总目标前进一步 do，求出可行解的一个解元素；
+- 最后，由所有解元素组合成问题的一个可行解。
