@@ -29,51 +29,51 @@ The sample case represents a tree with only 2 nodes, where 01 is the root and 02
 （树，输出每层叶子结点个数）
 
 思路：二维数组存储树，广度遍历，输出每层叶子结点个数
-- 需要把 ID 换算成 int
-- 用 散列表存储数据
+- 需要把锁输入的 ID 换算成 int
+- 用 散列表 存储数据
+- 用队列存放每层节点
 ** Solutions
 #+BEGIN_SRC c++
 #include <cstdio>
 const int maxn = 100;
-int ped[100+1][100+1]={}; //ped[i][0]==1 表示这个人有子
+int ped[100+1][100+1]={}; //ped[i][0] i 的孩子的个数
 void getid(int &a){
   char str[5];
   scanf("%s", str);
   a = 10*(str[0]-48)+(str[1]-48);
 }
-void findleaf(int que[], int &head, int &end){
-  int count = 0;
-  int p = end, n = head; //读该层的节点
+int countleaf(int que[], int &head, int &end){
+  int count = 0, p = end, n = head; //读该层的节点
   while(p%maxn!=n%maxn){
-    if(ped[que[p%maxn]][0]){
-      for(int i=1; i<=maxn; i++) if(ped[que[p%maxn]][i]) que[head++] = i;
+    int node = que[p%maxn];
+    if(ped[node][0]){ //node 子节点入队
+      for(int i=1; i<=maxn; i++)
+        if(ped[que[p%maxn]][i]) que[head++] = i;
     }
     else count++;
     p++; //读取下一个人
   }
   end = n; //上一层全部出队
-  printf("%d", count);
+  return count;
 }
 int main() {
   int n, l;
   scanf("%d%d", &n, &l);
   for(int i=1; i<=l; i++){
-    int node, k, child;
+    int node,k ,child;
     getid(node);
     scanf("%d", &k);
+    ped[node][0] = k; //记录孩子个数
     while(k--){
-      ped[node][0]++; //记录一个孩子
-      getid(child), ped[node][child] = 1;
+      getid(child);
+      ped[node][child] = 1;
     }
   }
+  //从 root 遍历
   int que[100] = {}, head = 0, end = 0;
-  // root 遍历输出
   que[head++] = 1;
-  findleaf(que, head, end);
-  while(head%maxn!=end%maxn){
-    printf(" ");
-    findleaf(que, head, end);
-  }
+  printf("%d", countleaf(que, head, end));
+  while(head%maxn!=end%maxn) printf(" %d", countleaf(que, head, end));
   return 0;
 }
 #+END_SRC
