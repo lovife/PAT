@@ -1,0 +1,143 @@
+* 1029 Median（25 分）
+Given an increasing sequence S of N integers, the median is the number at the middle position. For example, the median of S1 = { 11, 12, 13, 14 } is 12, and the median of S2 = { 9, 10, 15, 16, 17 } is 15. The median of two sequences is defined to be the median of the nondecreasing sequence which contains all the elements of both sequences. For example, the median of S1 and S2 is 13.
+
+Given two increasing sequences of integers, you are asked to find their median.
+
+** Input Specification:
+Each input file contains one test case. Each case occupies 2 lines, each gives the information of a sequence. For each sequence, the first positive integer N (≤2×10
+​5
+​​ ) is the size of that sequence. Then N integers follow, separated by a space. It is guaranteed that all the integers are in the range of long int.
+
+** Output Specification:
+For each test case you should output the median of the two given sequences in a line.
+
+** Sample Input:
+#+BEGIN_SRC text
+4 11 12 13 14
+5 9 10 15 16 17
+#+END_SRC
+** Sample Output:
+#+BEGIN_SRC text
+13
+#+END_SRC
+** Analyzation
+题目大意：给定两个单调增加序列，合并两个序列，找出中间位置的数
+
+分析：每个序列最多有 maxn = 2e5 个，元素值在 long int 8Byte，如果用数组存储 最多占用空间是 16*10^2*10^3 / 1024^2 B (题目限制 1.5M)
+
+- 现在面临的问题是内存可能只够存放一个序列
+- 换个角度想，把第一个序列保存在内存里，第二个数列其实已经保存在用户输入区
+- 因为两个序列单调增加，而且合并后数量固定 为 n1+n2, 那么中间位置也固定落在 第 [(n1+n2+1)/2] 个数，也就是排除掉 [(n1+n2+1)/2]-1个数就能找到中间位置的数
+- 模拟成以下模型
+  - 第一次 从两序列各取一个数，较小那个数就是合并后序列 第一个数
+  - 第二次 从第一个数来源再取一个数，比较，较小的数是第二个数
+  - 第 i 次 从第 i-1 个数来源再取一个数，比较，较小的数是第 i 个数
+  - 直到找到中间位置的数
+#+BEGIN_SRC text
+
+  |.|       |.|
+  |.|       |.|
+  |.|       |.|
+  |.|       |.|
+  |.|       |.|
+  \./       \./
+   k1        k2
+
+[i] min{k1,k2}
+#+END_SRC
+- 这个过程中可能发生两件事，序列 1 取完了或序列 2 取完了，还没到达中间位置
+  - 那么较大那个数就是 序号和本次相同的 数
+  - 再从这个数的来源不断取数做为 第 j 个数
+#+BEGIN_SRC text
+
+  | |       |.|
+  | |       |.|
+  | |       |.|
+  | |       |.|
+  | |       |.|
+  \ /       \./
+             k2
+
+[i]    k2
+#+END_SRC
+- 因为中间位置在序列中间，所以不可能出现两个序列全部取光还没达到的情况
+
+*如果用 long int 内存空间连一个序列都不够存放*
+
+*能否这么考虑，都得用 long int 存放，且数据量很多，前几次取数是不是就没那么重要，直接舍弃？，好像也不行，如果是大数，可能得另想一个过程模拟了*
+** Solutions
+#+BEGIN_SRC c++
+//不管内存限制, 部分通过，内存超出限制
+#include <cstdio>
+#include <algorithm>
+const int maxn = 2e5;
+long int se[2*maxn+10] = {};
+int main() {
+  int n1, n2, pofhaf;
+  scanf("%d", &n1);
+  for(int i=1; i<=n1; i++) scanf("%ld", &se[i]);
+  scanf("%d", &n2);
+  for(int i=n1+1; i<=n1+n2; i++) scanf("%ld", &se[i]);
+  std::sort(se, se+n1+n2);
+  pofhaf = (n1+n2+1)/2;
+  printf("%ld", se[pofhaf]);
+  return 0;
+}
+#+END_SRC
+#+BEGIN_SRC c++
+//代码模拟，满分通过
+#include <cstdio>
+#include <algorithm>
+const int maxn = 200005;
+int k[maxn] = {}, kend = 0;
+bool getone(int n2, int &tmp) {
+  if(n2>0){
+    scanf("%d", &tmp);
+    return true;
+  }
+  else return false;
+}
+bool fromk(int kp, int &tmp){
+  if(kp<kend){
+    tmp = k[kp];
+    return true;
+  }
+  else return false;
+}
+int main() {
+  scanf("%d", &kend);
+  for(int i=0; i<kend; i++) scanf("%d", &k[i]);
+  int n;
+  scanf("%d", &n);
+  int m = (kend+n+1)/2;
+  int pk = 0, count = 0, k1, k2, medi;
+  count++; // 得到第一个数
+  fromk(pk++, k1);
+  getone(n--, k2);
+  medi = k1<=k2? k1:k2;
+  while(count<m){
+    count++;
+    if(k1==medi){
+       if(!fromk(pk++, k1)){
+         medi = k2;
+         while(count<m){
+           count++;
+           getone(n--, medi);
+         }
+         break;
+       }
+    }else if(!getone(n--, k2)){
+         medi = k1;
+         while(count<m){
+           count++;
+           fromk(pk++, medi);
+         }
+         break;
+       }
+    medi = k1<=k2? k1:k2;
+  }
+  printf("%d", medi);
+  return 0;
+}
+
+#+END_SRC
