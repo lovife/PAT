@@ -38,6 +38,15 @@ For each UserID, you are supposed to print in one line the maximum potential amo
 思路：bef[1001][1001] 把输入数据转化为 Follow 用户 i 的用户列表，计算时，用 fwds[1001] 记录(1/0，fwd/not)，考虑 n 层之后，统计结果输出。
 
 开销: 1000*1000*4Byte + 1000*4Byte = 4 MB + 4KB
+
+解决：构建图，带层数的广度优先遍历
+
+- 队列存每层的节点
+- 散列数组 记录入队情况
+
+*数组大小设定问题*
+
+*源于没从题目中绕过来，题目的意思是每个最多关注 maxm = 100人，但是我的二维数组是存放关注的列表，大v有可能被大家都关注，那每行的最大应该是 maxn = 1000！*
 ** Solutions
 #+BEGIN_SRC c++
 // 自定义模型，答案错误 （27）
@@ -89,4 +98,59 @@ int main() {
     printf("%d\n", countk[i]);
   return 0;
 }
+#+END_SRC
+
+#+BEGIN_SRC c++
+// 满分通过
+  #include <cstdio>
+  #include <cstring>
+  const int maxn = 1010;
+  //const int maxm = 101;
+  //int foller[maxn][maxm] = {}; //这里对题目给的 M 理解不恰当
+  int foller[maxn][maxn] = {};
+  int que[maxn] = {}, inq[maxn] = {};
+  int bfs(int l){
+      memset(inq, 0, sizeof(inq));
+      inq[que[0]] = 1;
+      int head = 0, end = 1, count = 0;
+      while(head!=end&&l--){
+          int lhead = head, lend = end;
+          while(lhead!=lend){
+              int node = que[lhead%maxn];
+              lhead++;
+              for(int i=1; i<=foller[node][0]; i++){
+                  int child = foller[node][i];
+                  if(inq[child]) continue;
+                  else{
+                      inq[child] = 1;
+                      que[end%maxn] = child;
+                      end++;
+                      count++;
+                  }
+              }
+          }
+          head = lhead;
+      }
+      return count;
+  }
+  int main() {
+      int n, l, k;
+      scanf("%d %d", &n, &l);
+      for(int id=1; id<=n; id++){
+          scanf("%d", &k);
+          while(k--){
+              int fid;
+              scanf("%d", &fid);
+              int &p = foller[fid][0];
+              foller[fid][++p] = id;
+          }
+      }
+      int fuser;
+      scanf("%d", &k);
+      while(k--){
+          scanf("%d", &que[0]);
+          printf("%d\n", bfs(l));
+      }
+      return 0;
+  }
 #+END_SRC
