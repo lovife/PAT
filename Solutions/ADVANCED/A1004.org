@@ -34,46 +34,96 @@ The sample case represents a tree with only 2 nodes, where 01 is the root and 02
 - 用队列存放每层节点
 ** Solutions
 #+BEGIN_SRC c++
-#include <cstdio>
-const int maxn = 100;
-int ped[100+1][100+1]={}; //ped[i][0] i 的孩子的个数
-void getid(int &a){
-  char str[5];
-  scanf("%s", str);
-  a = 10*(str[0]-48)+(str[1]-48);
-}
-int countleaf(int que[], int &head, int &end){
-  int count = 0, p = end, n = head; //读该层的节点
-  while(p%maxn!=n%maxn){
-    int node = que[p%maxn];
-    if(ped[node][0]){ //node 子节点入队
-      for(int i=1; i<=maxn; i++)
-        if(ped[que[p%maxn]][i]) que[head++] = i;
-    }
-    else count++;
-    p++; //读取下一个人
+  #include <cstdio>
+  const int maxn = 100;
+  int ped[100+1][100+1]={}; //ped[i][0] i 的孩子的个数
+  void getid(int &a){
+      char str[5];
+      scanf("%s", str);
+      a = 10*(str[0]-48)+(str[1]-48);
   }
-  end = n; //上一层全部出队
-  return count;
+  int countleaf(int que[], int &head, int &end){
+      int count = 0, p = head, n = end; //读该层的节点
+      while(p%maxn!=n%maxn){
+          int node = que[p%maxn];
+          if(ped[node][0]){ //node 子节点入队
+              for(int i=1; i<=maxn; i++)
+                  if(ped[que[p%maxn]][i]) que[end++] = i;
+          }
+          else count++;
+          p++; //读取下一个人
+      }
+      head = n; //上一层全部出队
+      return count;
+  }
+  int main() {
+      int n, l;
+      scanf("%d%d", &n, &l);
+      for(int i=1; i<=l; i++){
+          int node,k ,child;
+          getid(node);
+          scanf("%d", &k);
+          ped[node][0] = k; //记录孩子个数
+          while(k--){
+              getid(child);
+              ped[node][child] = 1;
+          }
+      }
+      //从 root 遍历
+      int que[100] = {}, head = 0, end = 0;
+      que[end++] = 1;
+      printf("%d", countleaf(que, head, end));
+      while(head%maxn!=end%maxn) printf(" %d", countleaf(que, head, end));
+      return 0;
+  }
+#+END_SRC
+
+#+BEGIN_SRC c++
+//改进
+#include <cstdio>
+#include <cstring>
+const int maxn = 1000;
+const int maxm = 100;
+const int maxq = maxm*maxn;
+int follower[maxn+1][maxm+1] = {}, que[maxq] = {};
+void countfwd(int has[], int &count, int &qh, int &qe, int &ht){ //计算该层的 fwd 数 并入队下一层节点
+  int head = qh, end = qe;
+  while(head%maxq!=end%maxq){
+    int user = que[head++%maxq];
+    if(!has[user]){
+      count++;
+      has[user] = 1;
+      for(int j=1; j<=follower[user][0]; j++) que[qe++%maxq] = follower[user][j];
+    }
+  }
+  qh = end;
 }
 int main() {
-  int n, l;
+  int n, l, k;
   scanf("%d%d", &n, &l);
-  for(int i=1; i<=l; i++){
-    int node,k ,child;
-    getid(node);
+  for(int i=1; i<=n; i++){
     scanf("%d", &k);
-    ped[node][0] = k; //记录孩子个数
     while(k--){
-      getid(child);
-      ped[node][child] = 1;
+      int follow;
+      scanf("%d", &follow);
+      int &p = follower[follow][0];
+      follower[follow][++p] = i;
     }
   }
-  //从 root 遍历
-  int que[100] = {}, head = 0, end = 0;
-  que[head++] = 1;
-  printf("%d", countleaf(que, head, end));
-  while(head%maxn!=end%maxn) printf(" %d", countleaf(que, head, end));
+  // 得到 follower[userid][0] 关注他的人数 follower[userid][i] 关注者id
+  int kman[maxn], has[maxn+10];
+  scanf("%d", &k);
+  for(int i=0; i<k; i++) scanf("%d", &kman[i]);
+  for(int i=0; i<k; i++){
+    //初始化
+    memset(has, 0, sizeof(has));
+    int level = l, user = kman[i], count = 0;
+    int qh = 0, qe = 0, ht = 0;
+    has[user] = 1;
+    for(int j=1; j<=follower[user][0]; j++) que[qe++] = follower[user][j];
+    while(level--) countfwd(has, count, qh, qe, ht);
+    printf("%d\n", count);
+  }
   return 0;
 }
 #+END_SRC
