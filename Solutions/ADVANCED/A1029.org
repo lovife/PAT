@@ -64,7 +64,11 @@ For each test case you should output the median of the two given sequences in a 
 
 *如果用 long int 内存空间连一个序列都不够存放*
 
-*能否这么考虑，都得用 long int 存放，且数据量很多，前几次取数是不是就没那么重要，直接舍弃？，好像也不行，如果是大数，可能得另想一个过程模拟了*
+*能否这么考虑，都得用 long int 存放，且数据量很多，前几次取数是不是就没那么重要，直接舍弃？好像也不行，如果是大数，可能得另想一个过程模拟了*
+
+*发现该题十分简洁的代码答案* https://www.liuchuo.net/archives/2248
+
+我的问题是 if 用太多导致代码臃肿，要提高编码效率还得多加努力。比如限制自己用 if 解题什么的。
 ** Solutions
 #+BEGIN_SRC c++
 //不管内存限制, 部分通过，内存超出限制
