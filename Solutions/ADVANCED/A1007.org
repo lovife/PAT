@@ -9,8 +9,90 @@ Each input file contains one test case. Each case occupies two lines. The first 
 ** Output Specification:
 For each test case, output in one line the largest sum, together with the first and the last numbers of the maximum subsequence. The numbers must be separated by one space, but there must be no extra space at the end of a line. In case that the maximum subsequence is not unique, output the one with the smallest indices i and j (as shown by the sample case). If all the K numbers are negative, then its maximum sum is defined to be 0, and you are supposed to output the first and the last numbers of the whole sequence.
 
-Sample Input:
+** Sample Input:
+#+BEGIN_SRC text
 10
 -10 1 2 3 4 -5 -23 3 7 -21
-Sample Output:
+#+END_SRC
+** Sample Output:
+#+BEGIN_SRC text
 10 1 4
+#+END_SRC
+** Analyzation
+大意：给定一个序列，输出和最大的字序列的和，该字序列的第一项和最后一项的值。如果给定的序列元素全部小于零，则认为最大和是零，输出序列首尾项的值。
+
+- 要求：输出格式，开始下标靠前的字序列和优先输出，考虑到元素全部为负
+
+思路：用二维数组存储，开头为i（i=1,2,3,...,n）的子序列的最大值，和尾元素的值。然后遍历这个序列，输出最大值。对于和小于零的，另输出。
+
+改进思路：尝试不用二维数组，而用 tmp 和 i, j 来实现。
+
+动态规划过程，每输入一个数加到临时和里，如果此时和小于 0，对后续的和只有负影响，直接舍弃，让临时和归零，临时下标 i 指向下一个数。直到临时和不是负数，那么开始记录临时和的最大情况，更新下标 i j 的值。最后如果序列每个元素都小于零，循环中的条件没有一次成立，直接修改 maxsum 为零，即可正常输出。
+** Solutions
+#+BEGIN_SRC c++ -n -r
+#include <cstdio>
+const int maxk = 10010;
+int seq[maxk] = {}; //seq[0] 存放序列个数
+int csub[maxk][2] = {}; // csub[i][0] == maxsum; csub[i][1] == seq[j];
+void findmaxsum(int i, int n) {
+  int sum, &maxsum = csub[i][0];
+  csub[i][1] = maxsum = sum = seq[i];
+  for(int j=i+1; j<=n; j++){
+    sum += seq[j];
+    if(sum>maxsum){
+      maxsum = sum;
+      csub[i][1] = seq[j];
+    }
+  }
+}
+int main() {
+  bool isnegative = true;
+  scanf("%d", seq);
+  for(int *p = seq+1; p<=seq+seq[0]; p++){
+    scanf("%d", p);
+    if(*p>=0) isnegative = false;
+  }
+  if(isnegative) printf("0 %d %d", seq[1], seq[seq[0]]);
+  else {
+    // find every const subseq maxsum from i (i=1,2,3...seq[0])
+    for(int i=1; i<=seq[0]; i++) findmaxsum(i, seq[0]);
+    int posi = 1, maxsum = csub[posi][0];
+    for(int i=2; i<=seq[0]; i++){
+      if(csub[i][0]>maxsum){
+        posi = i;
+        maxsum = csub[posi][0];
+      }
+    }
+    printf("%d %d %d", maxsum, seq[posi], csub[posi][1]);
+  }
+  return 0;
+}
+#+END_SRC
+#+BEGIN_SRC c++ -n -r
+//改进思路
+#include <cstdio>
+const int maxk = 10010;
+int seq[maxk] = {};
+int main() {
+  int n, tempsum, tempindex, maxsum, indexi, indexj;
+  scanf("%d", &n);
+  tempsum = tempindex = indexi = 0;
+  maxsum = -1; //注意序列都是整数，最大负数和是 -1，让 maxsum 能正确接收第一个子序列和为 0 的信息
+  indexj = n-1;
+  for(int i=0; i<n; i++){
+    scanf("%d", &seq[i]);
+    tempsum += seq[i];
+    if(tempsum<0){
+      tempsum = 0;
+      tempindex = i+1;
+    }else if(tempsum>maxsum){
+      maxsum = tempsum;
+      indexi = tempindex;
+      indexj = i;
+    }
+  }
+  if(maxsum<0) maxsum = 0;
+  printf("%d %d %d", maxsum, seq[indexi], seq[indexj]);
+  return 0;
+}
+#+END_SRC
