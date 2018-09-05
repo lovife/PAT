@@ -29,7 +29,7 @@ For each test case, output in one line the largest sum, together with the first 
 
 动态规划过程，每输入一个数加到临时和里，如果此时和小于 0，对后续的和只有负影响，直接舍弃，让临时和归零，临时下标 i 指向下一个数。直到临时和不是负数，那么开始记录临时和的最大情况，更新下标 i j 的值。最后如果序列每个元素都小于零，循环中的条件没有一次成立，直接修改 maxsum 为零，即可正常输出。
 ** Solutions
-#+BEGIN_SRC c++ -n -r
+#+BEGIN_SRC c++
 #include <cstdio>
 const int maxk = 10010;
 int seq[maxk] = {}; //seq[0] 存放序列个数
@@ -68,7 +68,7 @@ int main() {
   return 0;
 }
 #+END_SRC
-#+BEGIN_SRC c++ -n -r
+#+BEGIN_SRC c++
 //改进思路
 #include <cstdio>
 const int maxk = 10010;
