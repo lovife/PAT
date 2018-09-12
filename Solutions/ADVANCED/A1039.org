@@ -1,0 +1,38 @@
+* 1039
+#+BEGIN_SRC c++
+#include <cstdio>
+#include <vector>
+#include <algorithm>
+using namespace std;
+const int maxn = 26 * 26 * 26 * 10 + 10;
+vector<int> vi[maxn];
+int getid(char *str) {
+  int i = 0, id = 0;
+  while(i<3) id = id * 26 + (str[i++] - 'A');
+  return id = id * 10 + (str[i] - '0');
+}
+int main() {
+  int n, k;
+  scanf("%d%d", &n, &k);
+  for(int i = 1; i <= k; i++){
+    int cor, n_p;
+    scanf("%d%d", &cor, &n_p);
+    while(n_p--){
+      char name[5];
+      scanf("%s", name);
+      int id = getid(name);
+      vi[id].push_back(cor);
+    }
+  }
+  for(int i = 1; i <= n; i++){
+    char name[5];
+    scanf("%s", name);
+    int id = getid(name);
+    sort(vi[id].begin(), vi[id].end());
+    printf("%s %lu", name, vi[id].size());
+    for(int j = 0; j < vi[id].size(); j++) printf(" %d", vi[id][j]);
+    printf("\n");
+  }
+  return 0;
+}
+#+END_SRC
