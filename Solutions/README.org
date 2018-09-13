@@ -1,5 +1,3 @@
 * My Solution Here
 
-- Make a commitment to myself for practicing PAT code daily
-- Can [[https://www.beeminder.com/lovife/patpractice#commitment][see this goal in Beeminder]]
 - Day day up :)
