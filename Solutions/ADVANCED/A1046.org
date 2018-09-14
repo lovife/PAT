@@ -32,13 +32,12 @@ For each test case, print your results in M lines, each contains the shortest di
 然后输入 M 个出口点对
 
 输出两个出口之间的最短距离
-
 ** Solutions
 #+BEGIN_SRC c++
 #include <stdio.h>
 const int MaxN = 100000;
 int main() {
-  int dis[MaxN]={0}; //用来记录第一个节点到第i+1个节点的距离
+  int dis[MaxN]={0}; //记录第一个节点到第i+1个节点的距离
   int n, dissum = 0;
   scanf("%d", &n);
   for(int i=1; i<=n; i++){
