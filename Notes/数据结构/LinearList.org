@@ -1,0 +1,18 @@
+* 顺序表
+** 定义
+*** 一维数组
+**** 静态分配
+#+BEGIN_SRC c++
+  #define MaxSize 50
+  typedef struct{
+      ElemType data[MaxSize];
+      int length;
+  }SqList;
+#+END_SRC
+**** 动态分配
+#+BEGIN_SRC c++
+  typedef struct{
+      ElemType *data;
+      int maxsize, length;
+  }SeqList;
+#+END_SRC
